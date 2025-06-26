@@ -25,10 +25,11 @@
 
     "baseUrl": "src",
     "paths": {
-      "@pages/*": ["src/pages/*"],
-      "@components/*": ["src/components/*"],
-      "@constants/*": ["src/constants/*"],
-      "@images/*": ["src/assets/images/*"]
+      "@pages/*": ["./pages/*"],
+      "@components/*": ["./components/*"],
+      "@ui/*": ["./ui-kit/*"],
+      "@constants/*": ["./constants/*"],
+      "@images/*": ["./assets/images/*"]
     }
   },
   "include": ["src"]
