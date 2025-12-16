@@ -3,6 +3,7 @@ import {COLOR_BASE, GeometryPack} from "@constants/constants.ts";
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 import Stats from 'three/examples/jsm/libs/stats.module.js'
 import {ResizeController} from "three/controllers/resizeController/resizeController.ts";
+import {ModelController} from "three/controllers/modelController.ts";
 
 
 export class Controller {
@@ -18,6 +19,9 @@ export class Controller {
   private clock: THREE.Clock;
   private stats;
 
+  private charController!: ModelController;
+  model: THREE.Object3D | null = null;
+
 
   constructor(el: HTMLCanvasElement, size) {
     this.el = el;
@@ -31,9 +35,10 @@ export class Controller {
   }
 
 
-  init() {
-    // this.createAxesHelper();
-    this.createObjects();
+  async init() {
+    this.createAxesHelper();
+    await this.createModels();
+    // this.createObjects();
     this.createCamera();
     this.createRender();
     this.createStats();
@@ -57,6 +62,14 @@ export class Controller {
     this.scene.add(axesHelper);
   }
 
+  async createModels() {
+    this.charController = await ModelController.create('/models/luoli/scene.gltf', true);
+    this.model = this.charController.scene
+    this.model?.scale.set(.02,.02,.02)
+    if(this.model) {
+      this.scene.add(this.model)
+    }
+  }
 
   createObjects() {
     const mesh = new THREE.Mesh(GeometryPack[1], new THREE.MeshBasicMaterial({color: COLOR_BASE, wireframe: true}));
@@ -68,7 +81,7 @@ export class Controller {
   createCamera() {
     this.camera = new THREE.PerspectiveCamera(75, this.size.w / this.size.h);
     this.scene.add(this.camera);
-    this.camera.position.set(0, 0, 15);
+    this.camera.position.set(0, 0, 7);
   }
 
 
