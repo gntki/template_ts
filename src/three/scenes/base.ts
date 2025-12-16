@@ -2,6 +2,7 @@ import * as THREE from 'three'
 import {COLOR_BASE, GeometryPack} from "@constants/constants.ts";
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 import Stats from 'three/examples/jsm/libs/stats.module.js'
+import {ResizeController} from "three/controllers/resizeController/resizeController.ts";
 
 
 export class Controller {
@@ -11,6 +12,7 @@ export class Controller {
   private camera: THREE.PerspectiveCamera;
   private renderer: THREE.WebGLRenderer;
   private orbitControls: OrbitControls;
+  private resizeController!: ResizeController;
 
 
   private clock: THREE.Clock;
@@ -41,7 +43,12 @@ export class Controller {
     this.clock = new THREE.Clock();
     this.tick();
 
-    this.addResizeListener();
+    this.resizeController = new ResizeController({
+      size: this.size,
+      scene: this.scene,
+      camera: this.camera,
+      renderer: this.renderer});
+    this.resizeController.addResizeListener();
   }
 
 
@@ -95,19 +102,10 @@ export class Controller {
     window.requestAnimationFrame(this.tick);
   }
 
-
-  addResizeListener() {
-    window.addEventListener('resize', () => {
-      this.size.w = window.innerWidth;
-      this.size.h = window.innerHeight
-
-      this.camera.aspect = this.size.w / this.size.h;
-      this.camera.updateProjectionMatrix();
-
-      this.renderer.setSize(this.size.w, this.size.h);
-      // renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-      this.renderer.render(this.scene, this.camera);
-    })
+  destroy() {
+    console.log('___DESTROY___')
+    this.resizeController.removeResizeListener();
+    this.renderer.dispose();
   }
 
 }
