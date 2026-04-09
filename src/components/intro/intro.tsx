@@ -7,11 +7,19 @@ export const Intro = () => {
   const sceneRef = useRef<HTMLCanvasElement | null>(null);
 
   useLayoutEffect(() => {
-    const size = {w: window?.innerWidth, h: window.innerHeight};
+    if (!sceneRef.current) {
+      return;
+    }
 
-    if(sceneRef?.current)
-      new Controller(sceneRef.current, size);
-  }, [sceneRef.current, window]);
+    const controller = new Controller(sceneRef.current, {
+      w: window.innerWidth,
+      h: window.innerHeight,
+    });
+
+    return () => {
+      controller.destroy();
+    };
+  }, []);
 
 
   return (

@@ -18,6 +18,8 @@ export class Controller {
 
   private clock: THREE.Clock;
   private stats;
+  private animationFrameId: number | null = null;
+  private isDestroyed = false;
 
   private charController!: ModelController;
   model: THREE.Object3D | null = null;
@@ -106,18 +108,29 @@ export class Controller {
 
 
   tick() {
+    if (this.isDestroyed) {
+      return;
+    }
+
     this.stats.begin();
 
     this.orbitControls.update();
     this.renderer.render(this.scene, this.camera);
 
     this.stats.end();
-    window.requestAnimationFrame(this.tick);
+    this.animationFrameId = window.requestAnimationFrame(this.tick);
   }
 
   destroy() {
-    console.log('___DESTROY___')
+    this.isDestroyed = true;
+
+    if (this.animationFrameId !== null) {
+      window.cancelAnimationFrame(this.animationFrameId);
+    }
+
     this.resizeController.removeResizeListener();
+    this.orbitControls.dispose();
+    this.stats?.dom?.remove();
     this.renderer.dispose();
   }
 
